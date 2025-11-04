@@ -81,19 +81,13 @@ const NoteDetail = () => {
 
     setSaving(true)
     try {
-      const res = await api.put(`/notes/${id}`, {
+      await api.put(`/notes/${id}`, {
         title: editTitle.trim(),
         content: editContent.trim()
       })
-      setNote(res.data)
-      setIsEditing(false)
-      setSaving(false)
-      showToast('Note updated successfully', 'success')
       
-      // Redirect to home after successful update
-      setTimeout(() => {
-        navigate('/')
-      }, 1000)
+      // Redirect immediately after successful API call
+      navigate('/')
     } catch (error) {
       console.error("Error updating note:", error)
       setSaving(false)
@@ -105,12 +99,9 @@ const NoteDetail = () => {
     setDeleting(true)
     try {
       await api.delete(`/notes/${id}`)
-      showToast('Note deleted successfully', 'success')
       
-      // Redirect to home after successful delete
-      setTimeout(() => {
-        navigate('/')
-      }, 1000)
+      // Redirect immediately after successful API call
+      navigate('/')
     } catch (error) {
       console.error("Error deleting note:", error)
       setDeleting(false)

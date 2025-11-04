@@ -9,7 +9,7 @@ const NoteCard = ({ note, onDelete, deleting }) => {
   }
 
   const handleDelete = (e) => {
-    e.stopPropagation()
+    
     onDelete(note._id)
     navigate("/")
   }
