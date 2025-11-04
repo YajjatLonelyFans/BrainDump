@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import axios from "axios"
+import api from "../lib/axios"
 import { ArrowLeft, Save, FileText, AlertCircle, CheckCircle, X } from "lucide-react"
 
 const Toast = ({ message, type, onClose }) => {
@@ -44,7 +44,7 @@ const CreatePage = () => {
 
     setLoading(true)
     try {
-      await axios.post("http://localhost:5001/notes/", {
+      await api.post("/notes/", {
         title: title.trim(),
         content: content.trim()
       })

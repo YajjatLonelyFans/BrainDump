@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Navbar from '../Components/Navbar'
 import RateLimit from '../Components/RateLimit'
 import NoteCard from '../Components/noteCard'
-import axios from 'axios'
+import api from '../lib/axios'
 import { FileText, AlertCircle, CheckCircle, X } from 'lucide-react'
 
 const Toast = ({ message, type, onClose }) => {
@@ -36,6 +36,7 @@ const Homepage = () => {
   const [notes, setNotes] = useState([])
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState(null)
+  const [deletingId, setDeletingId] = useState(null)
 
   const showToast = (message, type) => {
     setToast({ message, type })
@@ -44,7 +45,7 @@ const Homepage = () => {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const res = await axios.get("http://localhost:5001/notes/")
+        const res = await api.get("/notes/")
         setNotes(res.data)
         setLoading(false)
         if (res.data.length > 0) {
@@ -61,6 +62,23 @@ const Homepage = () => {
     };
     fetchNotes()
   }, [])
+
+  const handleDeleteNote = async (noteId) => {
+    setDeletingId(noteId)
+    
+    try {
+      await api.delete(`/notes/${noteId}`)
+      
+      // Remove note from state
+      setNotes(prevNotes => prevNotes.filter(note => note._id !== noteId))
+      setDeletingId(null)
+      showToast('Note deleted successfully', 'success')
+    } catch (error) {
+      console.error("Error deleting note:", error)
+      setDeletingId(null)
+      showToast('Failed to delete note', 'error')
+    }
+  }
 
   if (isRateLimit) {
     return <RateLimit />
@@ -92,7 +110,12 @@ const Homepage = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {notes.map((note) => (
-              <NoteCard key={note._id} note={note} />
+              <NoteCard 
+                key={note._id} 
+                note={note} 
+                onDelete={handleDeleteNote}
+                deleting={deletingId === note._id}
+              />
             ))}
           </div>
         )}
