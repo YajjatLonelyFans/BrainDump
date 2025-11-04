@@ -1,9 +1,22 @@
 import express from 'express';
 import noteRoutes from "./Routes/noteRoutes.js"
+import dotenv from "dotenv"
+import mongoose from 'mongoose';
+dotenv.config()
 const app = express()
 
 app.use("/notes" , noteRoutes);
 
-app.listen(3000 , ()=>{
-    console.log("Running on port 3000")
+
+
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 })
+.then(() => console.log("✅ MongoDB connected successfully"))
+.catch((err) => console.error("❌ MongoDB connection error:", err));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
