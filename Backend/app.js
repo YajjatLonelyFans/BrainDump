@@ -2,9 +2,11 @@ import express from 'express';
 import noteRoutes from "./Routes/noteRoutes.js"
 import dotenv from "dotenv"
 import mongoose from 'mongoose';
+import rateLimiter from './Middleware/rateLimit.js';
 dotenv.config()
 const app = express()
 app.use(express.json())
+app.use(rateLimiter);
 app.use("/notes" , noteRoutes);
 
 
